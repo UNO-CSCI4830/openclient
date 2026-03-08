@@ -9,6 +9,7 @@ export default function App() {
   const [specData, setSpecData] = useState(null)
 
   function handleSpecLoaded({ spec, format, source }) {
+    console.log('[openclient] Spec loaded:', { spec, format, source }) // TODO: remove debug log
     setSpecData({ spec, format, source })
   }
 

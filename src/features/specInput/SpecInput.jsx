@@ -15,7 +15,10 @@ const INPUT_METHODS = {
 function parseSpec(raw) {
   // Try JSON first since it's a subset of YAML
   try {
-    return { data, format: 'json' }
+    const data = JSON.parse(raw)
+    if (data && typeof data === 'object') {
+      return { data, format: 'json' }
+    }
   } catch {
     // Not valid JSON; try YAML
   }

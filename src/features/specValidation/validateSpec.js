@@ -48,10 +48,25 @@ export async function validateSpec(spec) {
     const validated = await SwaggerParser.validate(clone)
     return { valid: true, errors: [], spec: validated }
   } catch (err) {
-    // swagger-parser may throw a single error or an error with a `.details` array.
+    // swagger-parser may throw a single error or an error with a `.details` array
+    // of Ajv validation errors. Each detail has `instancePath` (JSON pointer to the
+    // location in the spec) and `message` (what's wrong).
     if (err.details && Array.isArray(err.details)) {
+      const seen = new Set()
       for (const detail of err.details) {
-        errors.push(detail.message || String(detail))
+        // Filter out oneOf/$ref noise - these are Ajv reporting every unmatched
+        // branch of a oneOf, not actionable errors on their own.
+        if (detail.keyword === 'oneOf' || (detail.keyword === 'required' && detail.params?.missingProperty === '$ref')) {
+          continue
+        }
+
+        // Decode JSON Pointer encoding (~1 = /, ~0 = ~) for readability.
+        const path = (detail.instancePath || '/').replace(/~1/g, '/').replace(/~0/g, '~')
+        const msg = `${path}: ${detail.message}`
+        if (!seen.has(msg)) {
+          seen.add(msg)
+          errors.push(msg)
+        }
       }
     } else {
       errors.push(err.message || String(err))

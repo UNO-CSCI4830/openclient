@@ -40,9 +40,12 @@ export default function EndpointList({ endpoints, tags }) {
         const term = searchTerm.toLowerCase()
         return (
           ep.path.toLowerCase().includes(term) ||
+          ep.method.includes(term) ||
           ep.summary.toLowerCase().includes(term) ||
           ep.operationId.toLowerCase().includes(term) ||
-          ep.description.toLowerCase().includes(term)
+          ep.description.toLowerCase().includes(term) ||
+          ep.tags.some((t) => t.toLowerCase().includes(term)) ||
+          (ep.deprecated && 'deprecated'.includes(term))
         )
       })
     : endpoints

@@ -53,21 +53,11 @@ body {
   padding: 0 1rem;
 }
 
-.api-view-header {
-  margin-bottom: 1.5rem;
+.action-bar {
+  margin-top: 1rem;
 }
 
-.api-view-header h2 {
-  margin-bottom: 0.5rem;
-}
-
-.api-view-header p {
-  margin-bottom: 0.5rem;
-  color: #555;
-}
-
-.api-view-header button {
-  margin-top: 0.5rem;
+.secondary-btn {
   padding: 0.5rem 1.25rem;
   background: none;
   border: 1px solid #1a73e8;
@@ -75,8 +65,9 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: background 0.2s;
 }
 
-.api-view-header button:hover {
+.secondary-btn:hover {
   background: #e8f0fe;
 }

@@ -121,7 +121,7 @@ export default function SchemaList({ schemas }) {
                   {isExpanded ? '\u25BC' : '\u25B6'}
                 </span>
                 <div className="schema-list-header">
-                  <h3 className="schema-list-name">{entry.name}</h3>
+                  <span className="schema-list-name">{entry.name}</span>
                   {entry.schema.type && (
                     <span className="schema-list-type">{entry.schema.type}</span>
                   )}

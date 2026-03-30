@@ -1,54 +1,61 @@
 /* FR4: API Metadata Aggregation View */
 .spec-view {
-  max-width: 1200px;   /* or 1400px */
   width: 100%;
-  margin: 2rem auto;
-  padding: 0 1.5rem;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .metadata-card {
+  width: 100%;
   background: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  padding: 2.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.75rem 1.75rem 1.5rem;
   text-align: left;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
 .metadata-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .title-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
   margin-bottom: 0.5rem;
   flex-wrap: wrap;
 }
 
 .title-row h1 {
-  font-size: 1.75rem;
-  color: #111;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.1;
 }
 
 /* Badges for Version and Spec Type */
 .badge {
-  padding: 0.25rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.7rem;
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 700;
+  line-height: 1;
 }
 
-.version { 
-  background: #eff6ff; 
-  color: #1d4ed8; 
-  border: 1px solid #dbeafe; 
+.version {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #dbeafe;
 }
 
-.spec-type { 
-  background: #f3f4f6; 
-  color: #374151; 
+.spec-type {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
 }
 
 .license-info {
@@ -58,40 +65,44 @@
 
 .metadata-description {
   color: #4b5563;
-  line-height: 1.6;
-  white-space: pre-wrap; /* Preserves line breaks from the spec */
-  margin: 1.5rem 0;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  margin: 1.25rem 0;
+  font-size: 0.95rem;
 }
 
 /* Sections for Servers and Tags */
 .metadata-section {
-  margin-top: 2rem;
+  margin-top: 1.75rem;
 }
 
 .metadata-section h3 {
   font-size: 1rem;
+  font-weight: 700;
   color: #111827;
   border-bottom: 1px solid #f3f4f6;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.45rem;
   margin-bottom: 0.75rem;
 }
 
-.server-list { 
-  list-style: none; 
-  padding: 0; 
+.server-list {
+  list-style: none;
+  padding: 0;
 }
 
-.server-list li { 
-  margin-bottom: 0.5rem; 
-  font-size: 0.95rem; 
+.server-list li {
+  margin-bottom: 0.55rem;
+  font-size: 0.95rem;
+  color: #374151;
 }
 
-.server-list code { 
-  background: #fdf2f8; 
-  color: #9d174d; 
-  padding: 0.2rem 0.4rem; 
+.server-list code {
+  background: #fdf2f8;
+  color: #9d174d;
+  padding: 0.18rem 0.42rem;
   border-radius: 4px;
   font-family: monospace;
+  font-size: 0.9em;
 }
 
 .server-desc {
@@ -99,25 +110,26 @@
   margin-left: 0.5rem;
 }
 
-.tag-cloud { 
-  display: flex; 
-  gap: 0.5rem; 
-  flex-wrap: wrap; 
+.tag-cloud {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
-.tag-pill { 
-  background: #f0fdf4; 
-  color: #166534; 
-  border: 1px solid #dcfce7; 
-  padding: 0.25rem 0.75rem; 
-  border-radius: 999px; 
-  font-size: 0.8rem; 
+.tag-pill {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #dcfce7;
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 /* Footer of the Metadata Card */
 .metadata-footer {
-  margin-top: 2.5rem;
-  padding-top: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
   border-top: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
@@ -126,9 +138,28 @@
   gap: 1rem;
 }
 
-.stats-row { 
-  display: flex; 
-  gap: 1.5rem; 
-  font-size: 0.85rem; 
-  color: #6b7280; 
+.stats-row {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .metadata-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .title-row h1 {
+    font-size: 1.6rem;
+  }
+
+  .metadata-footer {
+    align-items: flex-start;
+  }
+
+  .stats-row {
+    gap: 0.9rem;
+  }
 }

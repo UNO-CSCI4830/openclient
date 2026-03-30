@@ -16,6 +16,7 @@ export default function App() {
   const [validationResult, setValidationResult] = useState(null) // { valid, errors, spec? }
   const [apiModel, setApiModel] = useState(null)                 // parsed internal model
 
+
   const resetAll = useCallback(() => {
     setSpecData(null)
     setValidating(false)

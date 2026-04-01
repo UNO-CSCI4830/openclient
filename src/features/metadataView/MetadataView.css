@@ -66,9 +66,22 @@
 .metadata-description {
   color: #4b5563;
   line-height: 1.65;
-  white-space: pre-wrap;
   margin: 1.25rem 0;
   font-size: 0.95rem;
+}
+
+.metadata-description p {
+  margin: 0.5rem 0;
+}
+
+.metadata-description ul,
+.metadata-description ol {
+  margin: 0.25rem 0;
+  padding-left: 1.5rem;
+}
+
+.metadata-description li {
+  margin: 0.15rem 0;
 }
 
 /* Sections for Servers and Tags */

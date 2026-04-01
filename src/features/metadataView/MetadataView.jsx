@@ -1,4 +1,24 @@
+import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 import './MetadataView.css'
+
+const renderer = new marked.Renderer()
+const defaultLinkRenderer = renderer.link.bind(renderer)
+renderer.link = function (token) {
+  const html = defaultLinkRenderer(token)
+  return html.replace('<a ', '<a target="_blank" rel="noreferrer" ')
+}
+
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+  renderer,
+})
+
+function renderMarkdown(text) {
+  if (!text) return ''
+  return DOMPurify.sanitize(marked.parse(text))
+}
 
 export default function MetadataView({ apiModel, source }) {
   const { metadata, servers, tags, endpoints, schemas } = apiModel;
@@ -15,9 +35,14 @@ export default function MetadataView({ apiModel, source }) {
         </header>
 
         {/* Description */}
-        <p className="metadata-description">
-          {metadata.description || 'No description provided for this API.'}
-        </p>
+        {metadata.description ? (
+          <div
+            className="metadata-description"
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(metadata.description) }}
+          />
+        ) : (
+          <p className="metadata-description">No description provided for this API.</p>
+        )}
 
         {/* Contact */}
         {metadata.contact && (metadata.contact.name || metadata.contact.email || metadata.contact.url) && (

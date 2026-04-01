@@ -30,7 +30,7 @@
 
 .title-row h1 {
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 600;
   color: #111827;
   line-height: 1.1;
 }
@@ -47,15 +47,15 @@
 }
 
 .version {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #dbeafe;
+  background: #fff7ef;
+  color: var(--primary);
+  border: 1px solid #fae8d6;
 }
 
 .spec-type {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
+  background: #fafff8;
+  color: #85ea2d;
+  border: 1px solid #e4fbda;
 }
 
 .license-info {
@@ -97,12 +97,13 @@
 }
 
 .server-list code {
-  background: #fdf2f8;
-  color: #9d174d;
+  background: #fff7ef;
+  color: var(--primary);
   padding: 0.18rem 0.42rem;
   border-radius: 4px;
   font-family: monospace;
-  font-size: 0.9em;
+  font-size: 0.7em;
+  border: 1px solid #fae8d6;
 }
 
 .server-desc {

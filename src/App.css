@@ -10,12 +10,10 @@
 :root {
   --bg-page: #f4f6f8;
   --bg-surface: #ffffff;
-  --bg-header-start: #1f6feb;
-  --bg-header-end: #2f80ed;
   --text-main: #1f2937;
   --text-muted: #6b7280;
   --border-light: #e5e7eb;
-  --primary: #4990e2;
+  --primary: #ff8336;
   --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.06);
   --shadow-header: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
@@ -25,8 +23,7 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+  font-family: "Outfit", sans-serif;
   color: var(--text-main);
   background: var(--bg-page);
   line-height: 1.5;
@@ -47,24 +44,23 @@ body {
 
 /* Header */
 .app-header {
-  background: linear-gradient(
-    90deg,
-    var(--bg-header-start) 0%,
-    var(--bg-header-end) 100%
-  );
+  background: black; 
   color: #fff;
   box-shadow: var(--shadow-header);
-  min-height: 110px;
+  min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
+  border-bottom: solid 3px var(--primary);
+  margin-bottom: 2rem; 
 }
 
 .app-header h1 {
-  font-size: 4rem;
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  line-height: 1;
+  font-size: 1.75rem;
+  font-weight: 400;
+  /* letter-spacing: -0.05em; */
+  /* line-height: 1; */
   color: #fff;
   display: flex;
   align-items: center;
@@ -77,7 +73,7 @@ body {
 }
 
 .header-logo {
-  height: 3rem;
+  height: 2.5rem;
   margin-right: 0.75rem;
 }
 
@@ -149,10 +145,10 @@ body {
   margin-top: auto;
   padding: 1rem 2rem;
   text-align: center;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  border-top: 1px solid var(--border-light);
-  background: #fff;
+  color: white;
+  font-size: 1rem;
+  border-top: 3px solid var(--primary);
+  background: black;
 }
 
 /* Main content area */
@@ -171,10 +167,19 @@ body {
 /* Shared card feel for main sections */
 .metadata-view,
 .schema-list,
-.endpoint-list,
-.spec-input {
+.endpoint-list {
   width: 100%;
   max-width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+}
+
+.spec-input {
+  width: 90%;
+  max-width: 90%;
   background: var(--bg-surface);
   border: 1px solid var(--border-light);
   border-radius: 10px;

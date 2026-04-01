@@ -1,8 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import logo from '../assets/logo.png'
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef(null)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    function handleClick(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
+  }, [menuOpen])
 
   const handleClick = () => {
     window.location.reload()
@@ -11,10 +23,10 @@ export default function Header() {
   return (
     <header className="app-header">
       <h1 onClick={handleClick}>
-        <img src={logo} alt="logo" style={{ height: '3rem', marginRight: '0.75rem' }} />
+        <img src={logo} alt="logo" className="header-logo" />
         openclient
       </h1>
-      <div className="header-menu">
+      <div className="header-menu" ref={menuRef}>
         <button className="hamburger" onClick={() => setMenuOpen(o => !o)}>
           <span />
           <span />

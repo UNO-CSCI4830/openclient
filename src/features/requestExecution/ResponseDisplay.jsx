@@ -12,6 +12,50 @@ function statusCodeClass(code) {
 }
 
 /**
+ * Pretty-print an XML string using DOMParser.
+ * Returns the original string if parsing fails.
+ */
+function prettyPrintXml(xml) {
+  const doc = new DOMParser().parseFromString(xml, 'application/xml')
+  if (doc.querySelector('parsererror')) return xml
+
+  const lines = []
+  function walk(node, depth) {
+    const indent = '  '.repeat(depth)
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent.trim()
+      if (text) lines.push(`${indent}${text}`)
+      return
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return
+
+    const attrs = Array.from(node.attributes)
+      .map((a) => ` ${a.name}="${a.value}"`)
+      .join('')
+
+    if (node.childNodes.length === 0) {
+      lines.push(`${indent}<${node.tagName}${attrs}/>`)
+    } else if (
+      node.childNodes.length === 1 &&
+      node.childNodes[0].nodeType === Node.TEXT_NODE
+    ) {
+      const text = node.childNodes[0].textContent.trim()
+      lines.push(`${indent}<${node.tagName}${attrs}>${text}</${node.tagName}>`)
+    } else {
+      lines.push(`${indent}<${node.tagName}${attrs}>`)
+      for (const child of node.childNodes) {
+        walk(child, depth + 1)
+      }
+      lines.push(`${indent}</${node.tagName}>`)
+    }
+  }
+
+  lines.push(`<?xml version="1.0" encoding="UTF-8"?>`)
+  walk(doc.documentElement, 0)
+  return lines.join('\n')
+}
+
+/**
  * Format the response body for display based on content type.
  */
 function formatResponseBody(body, contentType) {
@@ -26,11 +70,11 @@ function formatResponseBody(body, contentType) {
     }
   }
 
-  if (
-    contentType.includes('text/') ||
-    contentType.includes('xml') ||
-    contentType.includes('html')
-  ) {
+  if (contentType.includes('xml')) {
+    return { formatted: prettyPrintXml(body), language: 'xml' }
+  }
+
+  if (contentType.includes('text/') || contentType.includes('html')) {
     return { formatted: body, language: 'text' }
   }
 

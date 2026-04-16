@@ -26,10 +26,9 @@ export default function ServerSelect({ servers, selectedUrl, onSelect }) {
 
   return (
     <div className="server-select">
-      <span className="server-select-label">Base URL</span>
-
-      <div className="server-select-controls">
-        {servers.length > 0 && (
+      {servers.length > 0 && (
+        <div className="server-select-row">
+          <span className="server-select-label">Server</span>
           <select
             className="server-select-dropdown"
             value={selectedIndex}
@@ -42,8 +41,11 @@ export default function ServerSelect({ servers, selectedUrl, onSelect }) {
               </option>
             ))}
           </select>
-        )}
+        </div>
+      )}
 
+      <div className="server-select-row">
+        <span className="server-select-label">URL</span>
         <input
           type="text"
           className="server-select-input"

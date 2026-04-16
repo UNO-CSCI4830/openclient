@@ -48,15 +48,21 @@ function formatResponseBody(body, contentType) {
  * and formatted body content.
  *
  * @param {object} props
+ * @param {object|null} props.request - Request descriptor from buildRequest()
  * @param {object} props.response - Result object from executeRequest()
  * @param {boolean} props.isLoading - Whether a request is in flight
  */
-export default function ResponseDisplay({ response, isLoading }) {
+export default function ResponseDisplay({ request, response, isLoading }) {
   const [headersExpanded, setHeadersExpanded] = useState(false)
 
   if (isLoading) {
     return (
       <div className="response-display">
+        {request && (
+          <div className="response-display-request-url">
+            {request.method} {request.url}
+          </div>
+        )}
         <div className="response-display-loading">Sending request...</div>
       </div>
     )
@@ -68,6 +74,12 @@ export default function ResponseDisplay({ response, isLoading }) {
 
   return (
     <div className="response-display">
+      {request && (
+        <div className="response-display-request-url">
+          <span className="response-display-request-url-label">Request URL:</span>
+          {request.method} {request.url}
+        </div>
+      )}
       <h4>Response</h4>
 
       {/* Status line */}

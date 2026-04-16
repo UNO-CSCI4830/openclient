@@ -102,6 +102,7 @@ export default function EndpointDetail({ endpoint, servers = [] }) {
 
   const [customQueryParams, setCustomQueryParams] = useState([])
   const [customHeaders, setCustomHeaders] = useState([])
+  const [requestData, setRequestData] = useState(null)
   const [responseData, setResponseData] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const abortControllerRef = useRef(null)
@@ -155,6 +156,7 @@ export default function EndpointDetail({ endpoint, servers = [] }) {
     })
 
     setIsLoading(true)
+    setRequestData(request)
     setResponseData(null)
 
     const result = await executeRequest(request, { signal: controller.signal })
@@ -170,6 +172,7 @@ export default function EndpointDetail({ endpoint, servers = [] }) {
       abortControllerRef.current.abort()
     }
     setIsInteractive(false)
+    setRequestData(null)
     setResponseData(null)
     setIsLoading(false)
   }
@@ -435,7 +438,7 @@ export default function EndpointDetail({ endpoint, servers = [] }) {
       )}
 
       {/* Actual response (after execution) */}
-      <ResponseDisplay response={responseData} isLoading={isLoading} />
+      <ResponseDisplay request={requestData} response={responseData} isLoading={isLoading} />
     </div>
   )
 }

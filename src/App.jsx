@@ -36,6 +36,7 @@ export default function App() {
 
     if (result.valid) {
       const model = parseSpec(result.spec)
+
       setApiModel(model)
     }
   }
@@ -74,6 +75,7 @@ export default function App() {
             <EndpointList
               endpoints={apiModel.endpoints}
               tags={apiModel.tags}
+              servers={apiModel.servers}
             />
 
             <div className="action-bar">

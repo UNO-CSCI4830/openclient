@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
-import { buildRequest, paramKey } from '../requestExecution/buildRequest'
+import {
+  buildRequest,
+  paramKey,
+  isAbsoluteHttpUrl,
+} from '../requestExecution/buildRequest'
 import { executeRequest } from '../requestExecution/executeRequest'
 import KeyValueEditor from '../requestExecution/KeyValueEditor'
 import ResponseDisplay from '../requestExecution/ResponseDisplay'
@@ -120,8 +124,14 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
   const requiredBodyMissing =
     requestBody?.required && !requestBodyValue.trim()
 
+  const serverUrlInvalid = !isAbsoluteHttpUrl(serverUrl)
+
   const executeDisabled =
-    !isInteractive || requiredParametersMissing || requiredBodyMissing || isLoading
+    !isInteractive ||
+    serverUrlInvalid ||
+    requiredParametersMissing ||
+    requiredBodyMissing ||
+    isLoading
 
   function handleParameterChange(key, value) {
     setParameterValues((prev) => ({
@@ -210,6 +220,13 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
           </div>
         )}
       </div>
+
+      {isInteractive && serverUrlInvalid && (
+        <p className="endpoint-detail-validation-message">
+          Set an absolute server URL (https://...) in Configuration before
+          executing the request.
+        </p>
+      )}
 
       {/* Header area */}
       {(showDescription || operationId || deprecated) && (

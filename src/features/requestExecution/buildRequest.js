@@ -8,6 +8,22 @@ export function paramKey(param) {
 }
 
 /**
+ * True if `url` is an absolute http(s) URL. A bare host like
+ * "example.com" or a relative path like "/api/v3" is rejected — both
+ * are resolved by fetch() against the app's own origin, which is
+ * almost never what the user wants for an API explorer.
+ */
+export function isAbsoluteHttpUrl(url) {
+  if (typeof url !== 'string' || !url.trim()) return false
+  try {
+    const parsed = new URL(url)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+/**
  * Set a header, removing any existing key that matches case-insensitively.
  * HTTP headers are case-insensitive, so "Content-Type" and "content-type"
  * must not coexist in the same request.

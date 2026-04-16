@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { buildRequest, paramKey } from '../../../src/features/requestExecution/buildRequest'
+import {
+  buildRequest,
+  paramKey,
+  isAbsoluteHttpUrl,
+} from '../../../src/features/requestExecution/buildRequest'
 
 describe('buildRequest', () => {
   const defaults = {
@@ -44,6 +48,11 @@ describe('buildRequest', () => {
       baseUrl: 'https://api.example.com/v1///',
     })
     expect(result.url).toBe('https://api.example.com/v1/users')
+  })
+
+  it('produces a path-only URL when baseUrl is empty', () => {
+    const result = buildRequest({ ...defaults, baseUrl: '' })
+    expect(result.url).toBe('/users')
   })
 
   describe('path parameters', () => {
@@ -432,6 +441,41 @@ describe('buildRequest', () => {
       expect(paramKey({ name: 'X-Request-ID', in: 'header' })).toBe(
         'header-X-Request-ID'
       )
+    })
+  })
+
+  describe('isAbsoluteHttpUrl', () => {
+    it('accepts http and https URLs', () => {
+      expect(isAbsoluteHttpUrl('http://example.com')).toBe(true)
+      expect(isAbsoluteHttpUrl('https://example.com')).toBe(true)
+      expect(isAbsoluteHttpUrl('https://example.com/api/v3')).toBe(true)
+      expect(isAbsoluteHttpUrl('HTTPS://example.com')).toBe(true)
+    })
+
+    it('rejects empty or whitespace-only strings', () => {
+      expect(isAbsoluteHttpUrl('')).toBe(false)
+      expect(isAbsoluteHttpUrl('   ')).toBe(false)
+    })
+
+    it('rejects non-string values', () => {
+      expect(isAbsoluteHttpUrl(null)).toBe(false)
+      expect(isAbsoluteHttpUrl(undefined)).toBe(false)
+    })
+
+    it('rejects bare hosts without a protocol', () => {
+      expect(isAbsoluteHttpUrl('example.com')).toBe(false)
+      expect(isAbsoluteHttpUrl('petstore3.swagger.io/api/v3')).toBe(false)
+    })
+
+    it('rejects relative paths', () => {
+      expect(isAbsoluteHttpUrl('/api/v3')).toBe(false)
+      expect(isAbsoluteHttpUrl('api/v3')).toBe(false)
+    })
+
+    it('rejects non-http protocols', () => {
+      expect(isAbsoluteHttpUrl('ftp://example.com')).toBe(false)
+      expect(isAbsoluteHttpUrl('file:///etc/passwd')).toBe(false)
+      expect(isAbsoluteHttpUrl('javascript:alert(1)')).toBe(false)
     })
   })
 })

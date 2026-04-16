@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { buildRequest } from '../requestExecution/buildRequest'
+import { buildRequest, paramKey } from '../requestExecution/buildRequest'
 import { executeRequest } from '../requestExecution/executeRequest'
 import KeyValueEditor from '../requestExecution/KeyValueEditor'
 import ResponseDisplay from '../requestExecution/ResponseDisplay'
@@ -78,7 +78,7 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
   const [parameterValues, setParameterValues] = useState(() => {
     const initialValues = {}
     parameters.forEach((param) => {
-      initialValues[`${param.in}-${param.name}`] = ''
+      initialValues[paramKey(param)] = ''
     })
     return initialValues
   })
@@ -114,8 +114,7 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
 
   const requiredParametersMissing = parameters.some((param) => {
     if (!param.required) return false
-    const key = `${param.in}-${param.name}`
-    return !parameterValues[key]?.trim()
+    return !parameterValues[paramKey(param)]?.trim()
   })
 
   const requiredBodyMissing =
@@ -248,7 +247,7 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
               </thead>
               <tbody>
                 {parameters.map((param) => {
-                  const key = `${param.in}-${param.name}`
+                  const key = paramKey(param)
 
                   return (
                     <tr key={key}>

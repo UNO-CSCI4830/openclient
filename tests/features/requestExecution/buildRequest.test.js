@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildRequest } from '../../../src/features/requestExecution/buildRequest'
+import { buildRequest, paramKey } from '../../../src/features/requestExecution/buildRequest'
 
 describe('buildRequest', () => {
   const defaults = {
@@ -95,6 +95,18 @@ describe('buildRequest', () => {
         parameterValues: {},
       })
       expect(result.url).toBe('https://api.example.com/v1/users/')
+    })
+
+    it('substitutes every occurrence of a repeated placeholder', () => {
+      const result = buildRequest({
+        ...defaults,
+        path: '/users/{id}/related/{id}',
+        parameters: [{ name: 'id', in: 'path', required: true }],
+        parameterValues: { 'path-id': '42' },
+      })
+      expect(result.url).toBe(
+        'https://api.example.com/v1/users/42/related/42'
+      )
     })
   })
 
@@ -305,6 +317,23 @@ describe('buildRequest', () => {
       })
       expect(result.headers).not.toHaveProperty('Cookie')
     })
+
+    it('percent-encodes cookie values with special characters', () => {
+      const result = buildRequest({
+        ...defaults,
+        parameters: [
+          { name: 'session', in: 'cookie' },
+          { name: 'prefs', in: 'cookie' },
+        ],
+        parameterValues: {
+          'cookie-session': 'a=b; c=d',
+          'cookie-prefs': 'hello world,foo',
+        },
+      })
+      expect(result.headers['Cookie']).toBe(
+        'session=a%3Db%3B%20c%3Dd; prefs=hello%20world%2Cfoo'
+      )
+    })
   })
 
   describe('request body', () => {
@@ -393,6 +422,16 @@ describe('buildRequest', () => {
       expect(result.method).toBe('GET')
       expect(result.headers).toEqual({})
       expect(result.body).toBeNull()
+    })
+  })
+
+  describe('paramKey', () => {
+    it('produces the lookup key used by parameterValues', () => {
+      expect(paramKey({ name: 'userId', in: 'path' })).toBe('path-userId')
+      expect(paramKey({ name: 'page', in: 'query' })).toBe('query-page')
+      expect(paramKey({ name: 'X-Request-ID', in: 'header' })).toBe(
+        'header-X-Request-ID'
+      )
     })
   })
 })

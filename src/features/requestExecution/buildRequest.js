@@ -1,4 +1,13 @@
 /**
+ * Build the lookup key used in `parameterValues` for a given parameter.
+ * Consumers that produce or read parameterValues must use this helper so
+ * the key scheme stays in one place.
+ */
+export function paramKey(param) {
+  return `${param.in}-${param.name}`
+}
+
+/**
  * Set a header, removing any existing key that matches case-insensitively.
  * HTTP headers are case-insensitive, so "Content-Type" and "content-type"
  * must not coexist in the same request.
@@ -45,13 +54,12 @@ export function buildRequest({
 }) {
   const headers = {}
 
-  // Substitute path parameters
+  // Substitute path parameters.
   let resolvedPath = path
   for (const param of parameters) {
     if (param.in !== 'path') continue
-    const key = `path-${param.name}`
-    const value = parameterValues[key] || ''
-    resolvedPath = resolvedPath.replace(
+    const value = parameterValues[paramKey(param)] || ''
+    resolvedPath = resolvedPath.replaceAll(
       `{${param.name}}`,
       encodeURIComponent(value)
     )
@@ -62,8 +70,7 @@ export function buildRequest({
 
   for (const param of parameters) {
     if (param.in !== 'query') continue
-    const key = `query-${param.name}`
-    const value = parameterValues[key]
+    const value = parameterValues[paramKey(param)]
     if (value !== undefined && value !== '') {
       queryParams.append(param.name, value)
     }
@@ -86,8 +93,7 @@ export function buildRequest({
   // Applied after Content-Type so user values take precedence.
   for (const param of parameters) {
     if (param.in !== 'header') continue
-    const key = `header-${param.name}`
-    const value = parameterValues[key]
+    const value = parameterValues[paramKey(param)]
     if (value !== undefined && value !== '') {
       setHeader(headers, param.name, value)
     }
@@ -99,14 +105,15 @@ export function buildRequest({
     }
   }
 
-  // Collect cookie parameters into a single Cookie header
+  // Collect cookie parameters into a single Cookie header.
+  // Values are percent-encoded so characters that would otherwise break
+  // the Cookie header syntax (; , whitespace, etc.) are safe.
   const cookies = []
   for (const param of parameters) {
     if (param.in !== 'cookie') continue
-    const key = `cookie-${param.name}`
-    const value = parameterValues[key]
+    const value = parameterValues[paramKey(param)]
     if (value !== undefined && value !== '') {
-      cookies.push(`${param.name}=${value}`)
+      cookies.push(`${param.name}=${encodeURIComponent(value)}`)
     }
   }
   if (cookies.length > 0) {

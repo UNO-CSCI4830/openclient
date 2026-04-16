@@ -5,6 +5,11 @@
     "version": "2.1.0",
     "description": "A feature-rich API for testing the endpoint list view."
   },
+  "servers": [
+    { "url": "https://api.example.com/v1", "description": "Production" },
+    { "url": "https://staging-api.example.com/v1", "description": "Staging" },
+    { "url": "/v1", "description": "Relative" }
+  ],
   "tags": [
     { "name": "Users", "description": "User management operations" },
     { "name": "Posts", "description": "Blog post operations" },

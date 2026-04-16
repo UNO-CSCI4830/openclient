@@ -11,7 +11,7 @@ import './EndpointList.css'
  * @param {Array} props.endpoints - Flat endpoint array from apiModel.endpoints
  * @param {Array} props.tags - Tag definitions from apiModel.tags
  */
-export default function EndpointList({ endpoints, tags, servers = [] }) {
+export default function EndpointList({ endpoints, tags, serverUrl = '' }) {
   const [expandedIds, setExpandedIds] = useState(new Set())
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -136,7 +136,7 @@ export default function EndpointList({ endpoints, tags, servers = [] }) {
                       <span className="endpoint-list-summary">{ep.summary}</span>
                     )}
                   </div>
-                  {isExpanded && <EndpointDetail endpoint={ep} servers={servers} />}
+                  {isExpanded && <EndpointDetail endpoint={ep} serverUrl={serverUrl} />}
                 </li>
               )
             })}

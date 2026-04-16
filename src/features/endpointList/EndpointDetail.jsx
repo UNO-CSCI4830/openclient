@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { buildRequest } from '../requestExecution/buildRequest'
 import { executeRequest } from '../requestExecution/executeRequest'
-import ServerSelect from '../requestExecution/ServerSelect'
 import KeyValueEditor from '../requestExecution/KeyValueEditor'
 import ResponseDisplay from '../requestExecution/ResponseDisplay'
 import './EndpointDetail.css'
@@ -59,9 +58,9 @@ function buildInitialRequestBody(requestBody) {
  *
  * @param {object} props
  * @param {object} props.endpoint - A single endpoint from apiModel.endpoints
- * @param {Array<{ url: string, description: string }>} props.servers - Available servers from apiModel
+ * @param {string} props.serverUrl - Global base URL from RequestConfig
  */
-export default function EndpointDetail({ endpoint, servers = [] }) {
+export default function EndpointDetail({ endpoint, serverUrl = '' }) {
   const {
     path,
     method,
@@ -86,10 +85,6 @@ export default function EndpointDetail({ endpoint, servers = [] }) {
 
   const [requestBodyValue, setRequestBodyValue] = useState(
     buildInitialRequestBody(requestBody)
-  )
-
-  const [selectedServerUrl, setSelectedServerUrl] = useState(
-    servers.length > 0 ? servers[0].url : ''
   )
 
   const [selectedContentType, setSelectedContentType] = useState(() => {
@@ -144,7 +139,7 @@ export default function EndpointDetail({ endpoint, servers = [] }) {
     abortControllerRef.current = controller
 
     const request = buildRequest({
-      baseUrl: selectedServerUrl,
+      baseUrl: serverUrl,
       path,
       method,
       parameters,
@@ -230,15 +225,6 @@ export default function EndpointDetail({ endpoint, servers = [] }) {
             <p className="endpoint-detail-description">{description}</p>
           )}
         </div>
-      )}
-
-      {/* Server selector (interactive mode only) */}
-      {isInteractive && (
-        <ServerSelect
-          servers={servers}
-          selectedUrl={selectedServerUrl}
-          onSelect={setSelectedServerUrl}
-        />
       )}
 
       {/* Parameters */}

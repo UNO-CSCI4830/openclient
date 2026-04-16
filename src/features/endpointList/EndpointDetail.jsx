@@ -242,7 +242,6 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
                   <th>Name</th>
                   <th>Location</th>
                   <th>Type</th>
-                  <th>Required</th>
                   <th>Description</th>
                   <th>Value</th>
                 </tr>
@@ -255,6 +254,9 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
                     <tr key={key}>
                       <td className="endpoint-detail-param-name">
                         {param.name}
+                        {param.required && (
+                          <span className="endpoint-detail-required">required</span>
+                        )}
                       </td>
                       <td>
                         <span className="endpoint-detail-location">{param.in}</span>
@@ -262,7 +264,6 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
                       <td className="endpoint-detail-type">
                         {formatSchemaType(param.schema, param.schemaName)}
                       </td>
-                      <td>{param.required ? 'Yes' : 'No'}</td>
                       <td>{param.description}</td>
                       <td>
                         <input

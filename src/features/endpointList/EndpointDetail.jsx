@@ -1,10 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
-import {
-  buildRequest,
-  paramKey,
-  isAbsoluteHttpUrl,
-} from '../requestExecution/buildRequest'
-import { executeRequest } from '../requestExecution/executeRequest'
+import { useState } from 'react'
+import { paramKey, isAbsoluteHttpUrl } from '../requestExecution/buildRequest'
+import { useRequestPipeline } from '../requestExecution/useRequestPipeline'
 import KeyValueEditor from '../requestExecution/KeyValueEditor'
 import ResponseDisplay from '../requestExecution/ResponseDisplay'
 import './EndpointDetail.css'
@@ -36,28 +32,6 @@ function statusCodeClass(code) {
 }
 
 /**
- * Build a default request body text from requestBody content.
- */
-function buildInitialRequestBody(requestBody) {
-  if (!requestBody || !requestBody.content) return ''
-
-  const jsonContent = requestBody.content['application/json']
-  if (!jsonContent || !jsonContent.schema) return ''
-
-  const schema = jsonContent.schema
-
-  if (schema.example) {
-    return JSON.stringify(schema.example, null, 2)
-  }
-
-  if (schema.default) {
-    return JSON.stringify(schema.default, null, 2)
-  }
-
-  return ''
-}
-
-/**
  * Expandable detail panel for a single endpoint.
  *
  * @param {object} props
@@ -66,8 +40,6 @@ function buildInitialRequestBody(requestBody) {
  */
 export default function EndpointDetail({ endpoint, serverUrl = '' }) {
   const {
-    path,
-    method,
     description,
     summary,
     operationId,
@@ -79,50 +51,28 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
 
   const [isInteractive, setIsInteractive] = useState(false)
 
-  const [parameterValues, setParameterValues] = useState(() => {
-    const initialValues = {}
-    parameters.forEach((param) => {
-      initialValues[paramKey(param)] = ''
-    })
-    return initialValues
-  })
-
-  const [requestBodyValue, setRequestBodyValue] = useState(
-    buildInitialRequestBody(requestBody)
-  )
-
-  const [selectedContentType, setSelectedContentType] = useState(() => {
-    if (requestBody?.content) {
-      const types = Object.keys(requestBody.content)
-      return types[0] || 'application/json'
-    }
-    return 'application/json'
-  })
-
-  const [customQueryParams, setCustomQueryParams] = useState([])
-  const [customHeaders, setCustomHeaders] = useState([])
-  const [requestData, setRequestData] = useState(null)
-  const [responseData, setResponseData] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const abortControllerRef = useRef(null)
-
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
-      }
-    }
-  }, [])
+  const {
+    parameterValues,
+    setParameterValue,
+    requestBodyValue,
+    setRequestBodyValue,
+    selectedContentType,
+    setSelectedContentType,
+    customQueryParams,
+    setCustomQueryParams,
+    customHeaders,
+    setCustomHeaders,
+    requestData,
+    responseData,
+    isLoading,
+    requiredParametersMissing,
+    requiredBodyMissing,
+    execute,
+    abort,
+    reset,
+  } = useRequestPipeline({ endpoint, serverUrl })
 
   const showDescription = description && description !== summary
-
-  const requiredParametersMissing = parameters.some((param) => {
-    if (!param.required) return false
-    return !parameterValues[paramKey(param)]?.trim()
-  })
-
-  const requiredBodyMissing =
-    requestBody?.required && !requestBodyValue.trim()
 
   const serverUrlInvalid = !isAbsoluteHttpUrl(serverUrl)
 
@@ -133,59 +83,9 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
     requiredBodyMissing ||
     isLoading
 
-  function handleParameterChange(key, value) {
-    setParameterValues((prev) => ({
-      ...prev,
-      [key]: value,
-    }))
-  }
-
-  async function handleExecute() {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-    }
-    const controller = new AbortController()
-    abortControllerRef.current = controller
-
-    const request = buildRequest({
-      baseUrl: serverUrl,
-      path,
-      method,
-      parameters,
-      parameterValues,
-      customQueryParams,
-      customHeaders,
-      body: requestBody ? requestBodyValue : null,
-      contentType: selectedContentType,
-    })
-
-    setIsLoading(true)
-    setRequestData(request)
-    setResponseData(null)
-
-    const result = await executeRequest(request, { signal: controller.signal })
-
-    if (abortControllerRef.current === controller) {
-      setResponseData(result)
-      setIsLoading(false)
-    }
-  }
-
-  function handleAbort() {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-    }
-  }
-
   function handleExitInteractive() {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-      abortControllerRef.current = null
-    }
+    reset()
     setIsInteractive(false)
-    setRequestData(null)
-    setResponseData(null)
-    setIsLoading(false)
   }
 
   const contentTypes = requestBody?.content
@@ -213,7 +113,7 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
               <button
                 type="button"
                 className="endpoint-detail-button"
-                onClick={handleAbort}
+                onClick={abort}
               >
                 Cancel
               </button>
@@ -230,7 +130,7 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
               type="button"
               className="endpoint-detail-button endpoint-detail-button--primary"
               disabled={executeDisabled}
-              onClick={handleExecute}
+              onClick={execute}
             >
               {isLoading ? 'Sending...' : 'Execute'}
             </button>
@@ -309,7 +209,7 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
                           }
                           value={parameterValues[key]}
                           onChange={(e) =>
-                            handleParameterChange(key, e.target.value)
+                            setParameterValue(key, e.target.value)
                           }
                           disabled={!isInteractive}
                         />

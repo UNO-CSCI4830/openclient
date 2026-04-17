@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import { paramKey, isAbsoluteHttpUrl } from '../requestExecution/buildRequest'
+import { useRequestPipeline } from '../requestExecution/useRequestPipeline'
+import KeyValueEditor from '../requestExecution/KeyValueEditor'
+import ResponseDisplay from '../requestExecution/ResponseDisplay'
 import './EndpointDetail.css'
 
 /**
@@ -28,34 +32,13 @@ function statusCodeClass(code) {
 }
 
 /**
- * Build a default request body text from requestBody content.
- */
-function buildInitialRequestBody(requestBody) {
-  if (!requestBody || !requestBody.content) return ''
-
-  const jsonContent = requestBody.content['application/json']
-  if (!jsonContent || !jsonContent.schema) return ''
-
-  const schema = jsonContent.schema
-
-  if (schema.example) {
-    return JSON.stringify(schema.example, null, 2)
-  }
-
-  if (schema.default) {
-    return JSON.stringify(schema.default, null, 2)
-  }
-
-  return ''
-}
-
-/**
  * Expandable detail panel for a single endpoint.
  *
  * @param {object} props
  * @param {object} props.endpoint - A single endpoint from apiModel.endpoints
+ * @param {string} props.serverUrl - Global base URL from RequestConfig
  */
-export default function EndpointDetail({ endpoint }) {
+export default function EndpointDetail({ endpoint, serverUrl = '' }) {
   const {
     description,
     summary,
@@ -68,38 +51,46 @@ export default function EndpointDetail({ endpoint }) {
 
   const [isInteractive, setIsInteractive] = useState(false)
 
-  const [parameterValues, setParameterValues] = useState(() => {
-    const initialValues = {}
-    parameters.forEach((param) => {
-      initialValues[`${param.in}-${param.name}`] = ''
-    })
-    return initialValues
-  })
-
-  const [requestBodyValue, setRequestBodyValue] = useState(
-    buildInitialRequestBody(requestBody)
-  )
+  const {
+    parameterValues,
+    setParameterValue,
+    requestBodyValue,
+    setRequestBodyValue,
+    selectedContentType,
+    setSelectedContentType,
+    customQueryParams,
+    setCustomQueryParams,
+    customHeaders,
+    setCustomHeaders,
+    requestData,
+    responseData,
+    isLoading,
+    requiredParametersMissing,
+    requiredBodyMissing,
+    execute,
+    abort,
+    reset,
+  } = useRequestPipeline({ endpoint, serverUrl })
 
   const showDescription = description && description !== summary
 
-  const requiredParametersMissing = parameters.some((param) => {
-    if (!param.required) return false
-    const key = `${param.in}-${param.name}`
-    return !parameterValues[key]?.trim()
-  })
-
-  const requiredBodyMissing =
-    requestBody?.required && !requestBodyValue.trim()
+  const serverUrlInvalid = !isAbsoluteHttpUrl(serverUrl)
 
   const executeDisabled =
-    !isInteractive || requiredParametersMissing || requiredBodyMissing
+    !isInteractive ||
+    serverUrlInvalid ||
+    requiredParametersMissing ||
+    requiredBodyMissing ||
+    isLoading
 
-  function handleParameterChange(key, value) {
-    setParameterValues((prev) => ({
-      ...prev,
-      [key]: value,
-    }))
+  function handleExitInteractive() {
+    reset()
+    setIsInteractive(false)
   }
+
+  const contentTypes = requestBody?.content
+    ? Object.keys(requestBody.content)
+    : []
 
   return (
     <div className="endpoint-detail">
@@ -118,23 +109,41 @@ export default function EndpointDetail({ endpoint }) {
           </button>
         ) : (
           <div className="endpoint-detail-actions">
-            <button
-              type="button"
-              className="endpoint-detail-button"
-              onClick={() => setIsInteractive(false)}
-            >
-              Cancel
-            </button>
+            {isLoading ? (
+              <button
+                type="button"
+                className="endpoint-detail-button"
+                onClick={abort}
+              >
+                Cancel
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="endpoint-detail-button"
+                onClick={handleExitInteractive}
+              >
+                Done
+              </button>
+            )}
             <button
               type="button"
               className="endpoint-detail-button endpoint-detail-button--primary"
               disabled={executeDisabled}
+              onClick={execute}
             >
-              Execute
+              {isLoading ? 'Sending...' : 'Execute'}
             </button>
           </div>
         )}
       </div>
+
+      {isInteractive && serverUrlInvalid && (
+        <p className="endpoint-detail-validation-message">
+          Set an absolute server URL (https://...) in Configuration before
+          executing the request.
+        </p>
+      )}
 
       {/* Header area */}
       {(showDescription || operationId || deprecated) && (
@@ -166,19 +175,21 @@ export default function EndpointDetail({ endpoint }) {
                   <th>Name</th>
                   <th>Location</th>
                   <th>Type</th>
-                  <th>Required</th>
                   <th>Description</th>
                   <th>Value</th>
                 </tr>
               </thead>
               <tbody>
                 {parameters.map((param) => {
-                  const key = `${param.in}-${param.name}`
+                  const key = paramKey(param)
 
                   return (
                     <tr key={key}>
                       <td className="endpoint-detail-param-name">
                         {param.name}
+                        {param.required && (
+                          <span className="endpoint-detail-required">required</span>
+                        )}
                       </td>
                       <td>
                         <span className="endpoint-detail-location">{param.in}</span>
@@ -186,7 +197,6 @@ export default function EndpointDetail({ endpoint }) {
                       <td className="endpoint-detail-type">
                         {formatSchemaType(param.schema, param.schemaName)}
                       </td>
-                      <td>{param.required ? 'Yes' : 'No'}</td>
                       <td>{param.description}</td>
                       <td>
                         <input
@@ -199,7 +209,7 @@ export default function EndpointDetail({ endpoint }) {
                           }
                           value={parameterValues[key]}
                           onChange={(e) =>
-                            handleParameterChange(key, e.target.value)
+                            setParameterValue(key, e.target.value)
                           }
                           disabled={!isInteractive}
                         />
@@ -219,6 +229,36 @@ export default function EndpointDetail({ endpoint }) {
         </div>
       )}
 
+      {/* Custom query parameters (interactive mode only) */}
+      {isInteractive && (
+        <div className="endpoint-detail-section">
+          <h4>Custom Query Parameters</h4>
+          <KeyValueEditor
+            rows={customQueryParams}
+            onChange={setCustomQueryParams}
+            addLabel="Add query parameter"
+            keyPlaceholder="Parameter name"
+            valuePlaceholder="Value"
+            disabled={!isInteractive}
+          />
+        </div>
+      )}
+
+      {/* Custom headers (interactive mode only) */}
+      {isInteractive && (
+        <div className="endpoint-detail-section">
+          <h4>Custom Headers</h4>
+          <KeyValueEditor
+            rows={customHeaders}
+            onChange={setCustomHeaders}
+            addLabel="Add header"
+            keyPlaceholder="Header name"
+            valuePlaceholder="Value"
+            disabled={!isInteractive}
+          />
+        </div>
+      )}
+
       {/* Request Body */}
       {requestBody && (
         <div className="endpoint-detail-section">
@@ -231,14 +271,38 @@ export default function EndpointDetail({ endpoint }) {
           {requestBody.description && (
             <p className="endpoint-detail-body-desc">{requestBody.description}</p>
           )}
-          {Object.entries(requestBody.content).map(([mediaType, media]) => (
-            <div key={mediaType} className="endpoint-detail-media">
-              <code className="endpoint-detail-media-type">{mediaType}</code>
-              <span className="endpoint-detail-type">
-                {formatSchemaType(media.schema, media.schemaName)}
-              </span>
+
+          {/* Content type selector */}
+          {contentTypes.length > 1 && isInteractive ? (
+            <div className="endpoint-detail-content-type">
+              <label className="endpoint-detail-content-type-label">
+                Content Type
+                <select
+                  className="endpoint-detail-content-type-select"
+                  value={selectedContentType}
+                  onChange={(e) => setSelectedContentType(e.target.value)}
+                >
+                  {contentTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </label>
             </div>
-          ))}
+          ) : (
+            <div>
+              {contentTypes.map((mediaType) => (
+                <div key={mediaType} className="endpoint-detail-media">
+                  <code className="endpoint-detail-media-type">{mediaType}</code>
+                  <span className="endpoint-detail-type">
+                    {formatSchemaType(
+                      requestBody.content[mediaType].schema,
+                      requestBody.content[mediaType].schemaName
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
 
           <textarea
             className="endpoint-detail-textarea"
@@ -260,7 +324,7 @@ export default function EndpointDetail({ endpoint }) {
         </div>
       )}
 
-      {/* Responses */}
+      {/* Responses (spec-defined) */}
       {responses.length > 0 && (
         <div className="endpoint-detail-section">
           <h4>
@@ -292,6 +356,9 @@ export default function EndpointDetail({ endpoint }) {
           </div>
         </div>
       )}
+
+      {/* Actual response (after execution) */}
+      <ResponseDisplay request={requestData} response={responseData} isLoading={isLoading} />
     </div>
   )
 }

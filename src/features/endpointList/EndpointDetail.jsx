@@ -171,9 +171,16 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
     }
   }
 
-  function handleCancel() {
+  function handleAbort() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
+    }
+  }
+
+  function handleExitInteractive() {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
     }
     setIsInteractive(false)
     setRequestData(null)
@@ -202,13 +209,23 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
           </button>
         ) : (
           <div className="endpoint-detail-actions">
-            <button
-              type="button"
-              className="endpoint-detail-button"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
+            {isLoading ? (
+              <button
+                type="button"
+                className="endpoint-detail-button"
+                onClick={handleAbort}
+              >
+                Cancel
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="endpoint-detail-button"
+                onClick={handleExitInteractive}
+              >
+                Done
+              </button>
+            )}
             <button
               type="button"
               className="endpoint-detail-button endpoint-detail-button--primary"

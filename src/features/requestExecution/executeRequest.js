@@ -21,6 +21,7 @@ export async function executeRequest(request, options = {}) {
   const startTime = performance.now()
 
   try {
+    // Auth will be addressed later
     const response = await fetch(request.url, {
       method: request.method,
       headers: request.headers,

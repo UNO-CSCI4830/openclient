@@ -11,6 +11,17 @@ function statusCodeClass(code) {
   return 'response-display-status--5xx'
 }
 
+export function escapeXmlText(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
+export function escapeXmlAttr(value) {
+  return escapeXmlText(value).replace(/"/g, '&quot;')
+}
+
 /**
  * Pretty-print an XML string using DOMParser.
  * Returns the original string if parsing fails.
@@ -24,13 +35,13 @@ function prettyPrintXml(xml) {
     const indent = '  '.repeat(depth)
     if (node.nodeType === Node.TEXT_NODE) {
       const text = node.textContent.trim()
-      if (text) lines.push(`${indent}${text}`)
+      if (text) lines.push(`${indent}${escapeXmlText(text)}`)
       return
     }
     if (node.nodeType !== Node.ELEMENT_NODE) return
 
     const attrs = Array.from(node.attributes)
-      .map((a) => ` ${a.name}="${a.value}"`)
+      .map((a) => ` ${a.name}="${escapeXmlAttr(a.value)}"`)
       .join('')
 
     if (node.childNodes.length === 0) {
@@ -39,7 +50,7 @@ function prettyPrintXml(xml) {
       node.childNodes.length === 1 &&
       node.childNodes[0].nodeType === Node.TEXT_NODE
     ) {
-      const text = node.childNodes[0].textContent.trim()
+      const text = escapeXmlText(node.childNodes[0].textContent.trim())
       lines.push(`${indent}<${node.tagName}${attrs}>${text}</${node.tagName}>`)
     } else {
       lines.push(`${indent}<${node.tagName}${attrs}>`)

@@ -22,9 +22,9 @@ export default function Header() {
 
   return (
     <header className="app-header">
+      <img src={logo} alt="logo" className="header-logo" />
       <h1 onClick={handleClick}>
-        <img src={logo} alt="logo" className="header-logo" />
-        openclient
+        OpenClient
       </h1>
       <div className="header-menu" ref={menuRef}>
         <button className="hamburger" onClick={() => setMenuOpen(o => !o)}>

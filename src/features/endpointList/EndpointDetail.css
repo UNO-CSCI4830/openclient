@@ -227,3 +227,58 @@
 .endpoint-detail-status--3xx { background: #1a73e8; }
 .endpoint-detail-status--4xx { background: #e65100; }
 .endpoint-detail-status--5xx { background: #c62828; }
+
+/* ── Content type selector ── */
+.endpoint-detail-content-type {
+  margin-bottom: 0.5rem;
+}
+
+.endpoint-detail-content-type-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.endpoint-detail-content-type-select {
+  padding: 0.35rem 0.5rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.endpoint-detail-content-type-select:focus {
+  outline: none;
+  border-color: #4990e2;
+  box-shadow: 0 0 0 3px rgba(73, 144, 226, 0.12);
+}
+
+.endpoint-detail-body-desc {
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.endpoint-detail-media {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.endpoint-detail-media-type {
+  font-size: 0.8rem;
+}
+
+.endpoint-detail-response-desc {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.endpoint-detail-response-media {
+  font-size: 0.8rem;
+}

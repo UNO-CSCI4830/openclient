@@ -1,8 +1,8 @@
 .spec-input {
-  width: 100%;
-  max-width: 100%;
+  width: 90%;
+  max-width: 90%;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 1.25rem;
+  /* padding: 1.5rem 1.5rem 1.25rem; */
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -11,8 +11,8 @@
 
 .spec-input h2 {
   margin-bottom: 1.25rem;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 500;
   color: #1f2937;
 }
 
@@ -43,8 +43,8 @@
 }
 
 .spec-input-tab.active {
-  color: #1a73e8;
-  border-bottom-color: #1a73e8;
+  color: var(--primary);
+  border-bottom-color: var(--primary);
   font-weight: 700;
 }
 
@@ -100,7 +100,7 @@
 .spec-input-submit {
   margin-top: 1rem;
   padding: 0.7rem 1.4rem;
-  background: #1a73e8;
+  background: var(--primary);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -111,7 +111,8 @@
 }
 
 .spec-input-submit:hover {
-  background: #1557b0;
+  background: color-mix(in srgb, var(--primary) 90%, black);
+  filter: none;
 }
 
 .spec-input-submit:disabled {

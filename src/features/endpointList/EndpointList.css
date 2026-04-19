@@ -154,16 +154,17 @@
   flex-shrink: 0;
 }
 
-.endpoint-list-method--get { background: #1a73e8; }
-.endpoint-list-method--post { background: #2e7d32; }
-.endpoint-list-method--put { background: #e65100; }
-.endpoint-list-method--delete { background: #c62828; }
-.endpoint-list-method--patch { background: #6a1b9a; }
+.endpoint-list-method--get { background: #01bc20; }
+.endpoint-list-method--post { background: #0091ff; }
+.endpoint-list-method--put { background: var(--primary) }
+.endpoint-list-method--delete { background: #f60000; }
+.endpoint-list-method--patch { background: #851cc6; }
 
 /* ── Path, summary, badges ── */
 .endpoint-list-path {
   font-family: monospace;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 800;
   color: #222;
 }
 

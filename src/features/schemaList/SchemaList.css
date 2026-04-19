@@ -141,7 +141,7 @@
   font-family: monospace;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #2563eb;
+  color: black;
 }
 
 .schema-list-type {
@@ -150,8 +150,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  background: #eef2ff;
-  color: #4338ca;
+  background: #fff6ee;
+  color: var(--primary);
 }
 
 /* ── Summary and usage ── */

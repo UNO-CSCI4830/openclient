@@ -116,7 +116,7 @@ export default function SpecInput({ onSpecLoaded }) {
 
   return (
     <section className="spec-input">
-      <h2>Load OpenAPI Specification</h2>
+      <h2>Import OpenAPI Specification</h2>
 
       {/* Tab bar for switching between the three input methods */}
       <div className="spec-input-tabs" role="tablist">
@@ -144,7 +144,7 @@ export default function SpecInput({ onSpecLoaded }) {
               rows={12}
             />
             <button onClick={handlePasteSubmit} className="spec-input-submit">
-              Load Spec
+              Import Spec
             </button>
           </div>
         )}

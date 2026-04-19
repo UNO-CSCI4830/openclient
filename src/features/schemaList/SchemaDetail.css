@@ -53,11 +53,12 @@
 .schema-detail-type {
   font-family: monospace;
   font-size: 0.8rem;
-  color: #1a73e8;
+  color: var(--primary);
 }
 
 .schema-detail-enum-flag {
-  color: #6a1b9a;
+  color: black;
+  font-weight: 600; 
   font-size: 0.75rem;
 }
 
@@ -119,11 +120,11 @@
   background: #888;
 }
 
-.schema-detail-method--get { background: #1a73e8; }
-.schema-detail-method--post { background: #2e7d32; }
-.schema-detail-method--put { background: #e65100; }
-.schema-detail-method--delete { background: #c62828; }
-.schema-detail-method--patch { background: #6a1b9a; }
+.schema-detail-method--get { background: #01bc20; }
+.schema-detail-method--post { background: #0091ff; }
+.schema-detail-method--put { background: var(--primary) }
+.schema-detail-method--delete { background: #f60000; }
+.schema-detail-method--patch { background: #851cc6; }
 
 .schema-detail-path {
   font-family: monospace;

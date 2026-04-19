@@ -8,6 +8,7 @@ import { validateSpec } from './features/specValidation/validateSpec'
 import { parseSpec } from './features/specParsing/parseSpec'
 import SchemaList from './features/schemaList/SchemaList'
 import EndpointList from './features/endpointList/EndpointList'
+import GlobalConfig from './features/globalConfig/GlobalConfig'
 import './App.css'
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
   const [validating, setValidating] = useState(false)            // true while validation runs
   const [validationResult, setValidationResult] = useState(null) // { valid, errors, spec? }
   const [apiModel, setApiModel] = useState(null)                 // parsed internal model
+  const [serverUrl, setServerUrl] = useState('')                  // global base URL for requests
 
 
   const resetAll = useCallback(() => {
@@ -22,6 +24,7 @@ export default function App() {
     setValidating(false)
     setValidationResult(null)
     setApiModel(null)
+    setServerUrl('')
   }, [])
 
   async function handleSpecLoaded({ spec, format, source }) {
@@ -37,6 +40,7 @@ export default function App() {
     if (result.valid) {
       const model = parseSpec(result.spec)
       setApiModel(model)
+      setServerUrl(model.servers.length > 0 ? model.servers[0].url : '')
     }
   }
 
@@ -67,6 +71,13 @@ export default function App() {
               source={specData.source}
             />
 
+            {/* Request configuration */}
+            <GlobalConfig
+              servers={apiModel.servers}
+              serverUrl={serverUrl}
+              onServerUrlChange={setServerUrl}
+            />
+
             {/* FR6: Schema aggregation */}
             <SchemaList schemas={apiModel.schemas} />
 
@@ -74,6 +85,7 @@ export default function App() {
             <EndpointList
               endpoints={apiModel.endpoints}
               tags={apiModel.tags}
+              serverUrl={serverUrl}
             />
 
             <div className="action-bar">

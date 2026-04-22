@@ -21,7 +21,7 @@ function renderMarkdown(text) {
 }
 
 export default function MetadataView({ apiModel, source }) {
-  const { metadata, servers, tags, endpoints, schemas } = apiModel;
+  const { metadata, servers, endpoints, schemas } = apiModel;
 
   return (
     <div className="spec-view">

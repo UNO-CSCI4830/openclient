@@ -28,7 +28,7 @@ export function isAbsoluteHttpUrl(url) {
  * HTTP headers are case-insensitive, so "Content-Type" and "content-type"
  * must not coexist in the same request.
  */
-function setHeader(headers, name, value) {
+export function setHeader(headers, name, value) {
   const lower = name.toLowerCase()
   for (const existing of Object.keys(headers)) {
     if (existing.toLowerCase() === lower) {

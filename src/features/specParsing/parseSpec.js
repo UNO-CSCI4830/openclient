@@ -26,7 +26,7 @@ export function parseSpec(validatedSpec) {
  * component schema references, then pushes usage records into the
  * matching schema's usedBy array.
  */
-function populateSchemaUsage(schemas, endpoints) {
+export function populateSchemaUsage(schemas, endpoints) {
   const schemasByName = new Map(schemas.map((s) => [s.name, s]))
 
   for (const endpoint of endpoints) {

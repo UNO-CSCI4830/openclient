@@ -61,7 +61,7 @@ export function parseEndpoints(spec, schemaNameMatcher) {
  * Merges path-level and operation-level parameters.
  * Operation params override path params that share the same name + in combination.
  */
-function mergeParameters(pathParams, operationParams) {
+export function mergeParameters(pathParams, operationParams) {
   const merged = new Map()
 
   for (const param of pathParams) {
@@ -77,7 +77,7 @@ function mergeParameters(pathParams, operationParams) {
 /**
  * Builds the normalized parameters array from merged OpenAPI 3.x parameters.
  */
-function buildParameters(params, schemaNameMatcher) {
+export function buildParameters(params, schemaNameMatcher) {
   return params.map((p) => ({
     name: p.name,
     in: p.in,
@@ -91,7 +91,7 @@ function buildParameters(params, schemaNameMatcher) {
 /**
  * Builds the normalized requestBody object from an OpenAPI 3.x requestBody.
  */
-function buildRequestBody(reqBody, schemaNameMatcher) {
+export function buildRequestBody(reqBody, schemaNameMatcher) {
   if (!reqBody) return null
 
   const content = {}
@@ -113,7 +113,7 @@ function buildRequestBody(reqBody, schemaNameMatcher) {
 /**
  * Builds the normalized responses array from an OpenAPI responses object.
  */
-function buildResponses(responses, schemaNameMatcher) {
+export function buildResponses(responses, schemaNameMatcher) {
   if (!responses) return []
 
   return Object.entries(responses).map(([statusCode, resp]) => {
@@ -140,7 +140,7 @@ function buildResponses(responses, schemaNameMatcher) {
  * body/formData parameters rather than a dedicated requestBody field.
  * Splits params into regular parameters and a normalized requestBody.
  */
-function extractSwagger2Body(params, schemaNameMatcher) {
+export function extractSwagger2Body(params, schemaNameMatcher) {
   const regularParams = []
   let bodySchema = null
   let bodyDescription = ''

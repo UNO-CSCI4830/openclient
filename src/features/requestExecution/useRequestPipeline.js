@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { buildRequest, paramKey } from './buildRequest'
 import { executeRequest } from './executeRequest'
 
-function buildInitialRequestBody(requestBody) {
+export function buildInitialRequestBody(requestBody) {
   if (!requestBody || !requestBody.content) return ''
 
   const jsonContent = requestBody.content['application/json']

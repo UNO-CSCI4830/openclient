@@ -5,16 +5,6 @@ import singleError from '../../../test-fixtures/single-error.json'
 import multipleErrors from '../../../test-fixtures/multiple-errors.json'
 import richSpec from '../../../test-fixtures/rich-spec.json'
 
-// Minimal valid spec for building test cases without fixture baggage
-function minimalSpec(overrides = {}) {
-  return {
-    openapi: '3.0.0',
-    info: { title: 'Test', version: '1.0.0' },
-    paths: {},
-    ...overrides,
-  }
-}
-
 describe('validateSpec', () => {
   describe('non-object inputs', () => {
     it('rejects null', async () => {

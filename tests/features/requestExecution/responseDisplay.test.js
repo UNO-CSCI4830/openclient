@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   escapeXmlText,
   escapeXmlAttr,
-} from '../../../src/features/requestExecution/ResponseDisplay'
+} from '../../../src/features/requestExecution/formatResponse'
 
 describe('escapeXmlText', () => {
   it('escapes ampersands', () => {

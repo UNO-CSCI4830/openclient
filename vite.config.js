@@ -6,6 +6,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 export default defineConfig({
   test: {
     globals: true,
+    environment: 'jsdom',
   },
   plugins: [
     react(),

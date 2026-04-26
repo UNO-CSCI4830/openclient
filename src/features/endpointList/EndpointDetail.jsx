@@ -38,7 +38,7 @@ function statusCodeClass(code) {
  * @param {object} props.endpoint - A single endpoint from apiModel.endpoints
  * @param {string} props.serverUrl - Global base URL from RequestConfig
  */
-export default function EndpointDetail({ endpoint, serverUrl = '' }) {
+export default function EndpointDetail({ endpoint, serverUrl = '', environmentVariables = [] }) {
   const {
     description,
     summary,
@@ -70,7 +70,7 @@ export default function EndpointDetail({ endpoint, serverUrl = '' }) {
     execute,
     abort,
     reset,
-  } = useRequestPipeline({ endpoint, serverUrl })
+  } = useRequestPipeline({ endpoint, serverUrl, environmentVariables })
 
   const showDescription = description && description !== summary
 

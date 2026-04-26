@@ -168,15 +168,11 @@ describe('requiredParametersMissing derivation', () => {
 })
 
 describe('requiredBodyMissing derivation', () => {
-  it('is falsy when there is no requestBody', () => {
+  it('is false when there is no requestBody', () => {
     expect(deriveRequiredBodyMissing(undefined, '')).toBeFalsy()
   })
 
-  it('is falsy when requestBody.required is false', () => {
-    expect(deriveRequiredBodyMissing({ required: false }, '')).toBeFalsy()
-  })
-
-  it('is falsy when requestBody.required is false and body is also empty', () => {
+  it('is false when requestBody.required is false', () => {
     expect(deriveRequiredBodyMissing({ required: false }, '')).toBeFalsy()
   })
 

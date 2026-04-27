@@ -194,6 +194,61 @@ body {
   justify-content: flex-start;
 }
 
+.action-bar-right {
+  margin-left: auto;
+}
+
+.save-spec-inline {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.save-spec-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  width: 200px;
+}
+
+.save-spec-input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.save-spec-confirm {
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-spec-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.save-spec-cancel {
+  padding: 0.5rem 1rem;
+  background: none;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 /* Shared button style */
 .secondary-btn {
   padding: 0.7rem 1.25rem;

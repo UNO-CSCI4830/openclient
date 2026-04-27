@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import logo from '../assets/logo.png'
 
-export default function Header() {
+export default function Header({ user, onAccount, onSignOut, onLogin, onNewSpec, showNewSpec, hideMenu, onLoginPage }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef(null)
 
@@ -17,7 +17,7 @@ export default function Header() {
   }, [menuOpen])
 
   const handleClick = () => {
-    window.location.reload()
+    if (!hideMenu && !onLoginPage) onNewSpec?.()
   }
 
   return (
@@ -26,7 +26,7 @@ export default function Header() {
       <h1 onClick={handleClick}>
         OpenClient
       </h1>
-      <div className="header-menu" ref={menuRef}>
+      {!hideMenu && <div className="header-menu" ref={menuRef}>
         <button className="hamburger" onClick={() => setMenuOpen(o => !o)}>
           <span />
           <span />
@@ -34,11 +34,15 @@ export default function Header() {
         </button>
         {menuOpen && (
           <div className="dropdown">
-            <button onClick={() => setMenuOpen(false)}>Account</button>
-            <button onClick={() => setMenuOpen(false)}>Settings</button>
+            {showNewSpec && <button onClick={() => { onNewSpec?.(); setMenuOpen(false) }}>New Spec</button>}
+            {user ? (
+              <button onClick={() => { onAccount?.(); setMenuOpen(false) }}>Account</button>
+            ) : (
+              <button onClick={() => { onLogin?.(); setMenuOpen(false) }}>Login</button>
+            )}
           </div>
         )}
-      </div>
+      </div>}
     </header>
   )
 }

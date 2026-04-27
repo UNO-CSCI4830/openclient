@@ -1,0 +1,97 @@
+.saved-specs {
+  margin-top: 2rem;
+}
+
+.saved-specs h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-main);
+}
+
+.saved-specs-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.saved-spec-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+}
+
+.saved-spec-name {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+}
+
+.saved-spec-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.saved-spec-load {
+  padding: 0.3rem 0.75rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.saved-spec-delete {
+  padding: 0.3rem 0.75rem;
+  background: none;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.saved-specs-empty {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.saved-spec-confirm-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.saved-spec-confirm-yes {
+  padding: 0.3rem 0.75rem;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.saved-spec-confirm-no {
+  padding: 0.3rem 0.75rem;
+  background: none;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+}

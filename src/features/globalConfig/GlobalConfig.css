@@ -35,3 +35,75 @@
   border-radius: 6px;
   background: #fafafa;
 }
+
+/* FR15: Environment Variables */
+.environment-variables {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.environment-variables-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.environment-variables-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.environment-variables-header button,
+.environment-variable-row button {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.environment-variables-header button:hover,
+.environment-variable-row button:hover {
+  background: #f3f4f6;
+}
+
+.environment-variables-empty {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.environment-variables-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.environment-variable-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(180px, 2fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.environment-variable-row input {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.environment-variable-row input:focus {
+  outline: none;
+  border-color: #4990e2;
+  box-shadow: 0 0 0 2px rgba(73, 144, 226, 0.18);
+}

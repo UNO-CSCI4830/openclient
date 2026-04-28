@@ -22,7 +22,7 @@ export function buildInitialRequestBody(requestBody) {
  * Display concerns (interactive/read-only mode, server URL validity)
  * live in the consuming component.
  */
-export function useRequestPipeline({ endpoint, serverUrl }) {
+export function useRequestPipeline({ endpoint, serverUrl, environmentVariables = [] }) {
   const { path, method, parameters = [], requestBody } = endpoint
 
   const [parameterValues, setParameterValues] = useState(() => {
@@ -89,6 +89,7 @@ export function useRequestPipeline({ endpoint, serverUrl }) {
       customHeaders,
       body: requestBody ? requestBodyValue : null,
       contentType: selectedContentType,
+      environmentVariables,
     })
 
     setIsLoading(true)

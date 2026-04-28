@@ -8,6 +8,22 @@ export function paramKey(param) {
 }
 
 /**
+ * FR15: Replace environment variable placeholders like {{userId}}
+ * with their matching values from the environment variables list.
+ */
+export function applyEnvironmentVariables(value, environmentVariables = []) {
+  if (typeof value !== 'string') return value
+
+  return value.replace(/\{\{(.+?)\}\}/g, (match, name) => {
+    const variable = environmentVariables.find(
+      (item) => item.name.trim() === name.trim()
+    )
+
+    return variable ? variable.value : match
+  })
+}
+
+/**
  * True if `url` is an absolute http(s) URL. A bare host like
  * "example.com" or a relative path like "/api/v3" is rejected — both
  * are resolved by fetch() against the app's own origin, which is
@@ -55,6 +71,7 @@ export function setHeader(headers, name, value) {
  * @param {Array<{key: string, value: string}>} options.customHeaders - User-added headers
  * @param {string|null} options.body - Raw request body string (null if no body)
  * @param {string} options.contentType - Selected content type for the body (e.g. "application/json")
+ * @param {Array<{name: string, value: string}>} options.environmentVariables - FR15 environment variables
  * @returns {{ url: string, method: string, headers: object, body: string|null }}
  */
 export function buildRequest({
@@ -67,14 +84,21 @@ export function buildRequest({
   customHeaders = [],
   body = null,
   contentType = 'application/json',
+  environmentVariables = [],
 }) {
   const headers = {}
+
+  // FR15: Apply environment variables to the base URL.
+  const resolvedBaseUrl = applyEnvironmentVariables(baseUrl, environmentVariables)
 
   // Substitute path parameters.
   let resolvedPath = path
   for (const param of parameters) {
     if (param.in !== 'path') continue
-    const value = parameterValues[paramKey(param)] || ''
+    const value = applyEnvironmentVariables(
+      parameterValues[paramKey(param)] || '',
+      environmentVariables
+    )
     resolvedPath = resolvedPath.replaceAll(
       `{${param.name}}`,
       encodeURIComponent(value)
@@ -86,15 +110,21 @@ export function buildRequest({
 
   for (const param of parameters) {
     if (param.in !== 'query') continue
-    const value = parameterValues[paramKey(param)]
+    const value = applyEnvironmentVariables(
+      parameterValues[paramKey(param)],
+      environmentVariables
+    )
     if (value !== undefined && value !== '') {
       queryParams.append(param.name, value)
     }
   }
 
   for (const { key, value } of customQueryParams) {
-    if (key.trim()) {
-      queryParams.append(key, value)
+    const resolvedKey = applyEnvironmentVariables(key, environmentVariables)
+    const resolvedValue = applyEnvironmentVariables(value, environmentVariables)
+
+    if (resolvedKey.trim()) {
+      queryParams.append(resolvedKey, resolvedValue)
     }
   }
 
@@ -102,22 +132,28 @@ export function buildRequest({
   let requestBody = null
   if (body !== null && body !== '') {
     setHeader(headers, 'Content-Type', contentType)
-    requestBody = body
+    requestBody = applyEnvironmentVariables(body, environmentVariables)
   }
 
   // Collect header parameters (spec-defined + custom)
   // Applied after Content-Type so user values take precedence.
   for (const param of parameters) {
     if (param.in !== 'header') continue
-    const value = parameterValues[paramKey(param)]
+    const value = applyEnvironmentVariables(
+      parameterValues[paramKey(param)],
+      environmentVariables
+    )
     if (value !== undefined && value !== '') {
       setHeader(headers, param.name, value)
     }
   }
 
   for (const { key, value } of customHeaders) {
-    if (key.trim()) {
-      setHeader(headers, key, value)
+    const resolvedKey = applyEnvironmentVariables(key, environmentVariables)
+    const resolvedValue = applyEnvironmentVariables(value, environmentVariables)
+
+    if (resolvedKey.trim()) {
+      setHeader(headers, resolvedKey, resolvedValue)
     }
   }
 
@@ -127,7 +163,10 @@ export function buildRequest({
   const cookies = []
   for (const param of parameters) {
     if (param.in !== 'cookie') continue
-    const value = parameterValues[paramKey(param)]
+    const value = applyEnvironmentVariables(
+      parameterValues[paramKey(param)],
+      environmentVariables
+    )
     if (value !== undefined && value !== '') {
       cookies.push(`${param.name}=${encodeURIComponent(value)}`)
     }
@@ -137,7 +176,7 @@ export function buildRequest({
   }
 
   // Build the full URL
-  const normalizedBase = baseUrl.replace(/\/+$/, '')
+  const normalizedBase = resolvedBaseUrl.replace(/\/+$/, '')
   const queryString = queryParams.toString()
   const url = queryString
     ? `${normalizedBase}${resolvedPath}?${queryString}`
@@ -150,4 +189,3 @@ export function buildRequest({
     body: requestBody,
   }
 }
-

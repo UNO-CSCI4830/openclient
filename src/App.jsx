@@ -17,6 +17,7 @@ export default function App() {
   const [validationResult, setValidationResult] = useState(null) // { valid, errors, spec? }
   const [apiModel, setApiModel] = useState(null)                 // parsed internal model
   const [serverUrl, setServerUrl] = useState('')                  // global base URL for requests
+  const [environmentVariables, setEnvironmentVariables] = useState([])
 
 
   const resetAll = useCallback(() => {
@@ -25,6 +26,7 @@ export default function App() {
     setValidationResult(null)
     setApiModel(null)
     setServerUrl('')
+    setEnvironmentVariables([])
   }, [])
 
   async function handleSpecLoaded({ spec, format, source }) {
@@ -76,6 +78,8 @@ export default function App() {
               servers={apiModel.servers}
               serverUrl={serverUrl}
               onServerUrlChange={setServerUrl}
+              environmentVariables={environmentVariables}
+              onEnvironmentVariablesChange={setEnvironmentVariables}
             />
 
             {/* FR6: Schema aggregation */}
@@ -86,6 +90,7 @@ export default function App() {
               endpoints={apiModel.endpoints}
               tags={apiModel.tags}
               serverUrl={serverUrl}
+              environmentVariables={environmentVariables}
             />
 
             <div className="action-bar">

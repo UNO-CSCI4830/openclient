@@ -25,7 +25,7 @@ export default function GlobalConfig({
   function addEnvironmentVariable() {
     onEnvironmentVariablesChange((prev) => [
       ...prev,
-      { name: '', value: '' },
+      { id: crypto.randomUUID(), name: '', value: '' },
     ])
   }
 
@@ -79,7 +79,7 @@ export default function GlobalConfig({
             ) : (
               <div className="environment-variables-list">
                 {environmentVariables.map((variable, index) => (
-                  <div className="environment-variable-row" key={index}>
+                  <div className="environment-variable-row" key={variable.id}>
                     <input
                       type="text"
                       placeholder="name"

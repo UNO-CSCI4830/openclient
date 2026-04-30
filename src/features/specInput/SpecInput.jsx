@@ -92,8 +92,10 @@ export default function SpecInput({ onSpecLoaded }) {
     setError(null)
     setLoading(true)
     try {
-      // Route through the dev server proxy to avoid browser CORS restrictions.
-      const proxyUrl = `/api/fetch-spec?url=${encodeURIComponent(trimmed)}`
+      // Route through a proxy to avoid browser CORS restrictions.
+      // Dev: Vite middleware in vite.config.js. Prod: Cloudflare Worker via VITE_FETCH_SPEC_URL.
+      const proxyBase = import.meta.env.VITE_FETCH_SPEC_URL || '/api/fetch-spec'
+      const proxyUrl = `${proxyBase}?url=${encodeURIComponent(trimmed)}`
       const response = await fetch(proxyUrl)
 
       if (!response.ok) {
